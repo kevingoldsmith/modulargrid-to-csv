@@ -29,8 +29,8 @@ def parse_file(html_text:str):
 
     tbody = soup.find('tbody')
     rows = tbody.find_all('tr')
-    modules = [['manufacturer', 'module', 'description', 'width', 'depth',
-                '+12V', '-12V', '+5V', 'url', 'thumbnail', 'row']]
+    modules = [['manufacturer', 'module', 'description', 'width (HP)', 'depth (mm)',
+                '+12V (mA)', '-12V (mA)', '+5V (mA)', 'url', 'thumbnail', 'row']]
     for row in rows:
         module = {
             'manufacturer': '',
@@ -59,17 +59,17 @@ def parse_file(html_text:str):
         module['description'] = name.find('small').text
 
         module['row'] = cols[2].text.strip()
-        module['width'] = cols[3].text.replace('\xa0','').replace('HP', '')
-        module['depth'] = cols[4].text.replace('\xa0',' ').strip()
+        module['width'] = cols[3].text.replace('\xa0','').replace('HP', '').strip()
+        module['depth'] = cols[4].text.replace('\xa0','').replace('mm', '').strip()
 
         if not cols[5].has_attr('colspan'):
-            module['+12V'] = cols[5].text.replace('\xa0',' ').strip()
-            module['-12V'] = cols[6].text.replace('\xa0',' ').strip()
-            module['+5V'] = cols[7].text.replace('\xa0',' ').strip()
+            module['+12V'] = cols[5].text.replace('\xa0','').replace('mA', '').strip()
+            module['-12V'] = cols[6].text.replace('\xa0',' ').replace('mA', '').strip()
+            module['+5V'] = cols[7].text.replace('\xa0',' ').replace('mA', '').strip()
         else:
-            module['+12V'] = '0 mA'
-            module['-12V'] = '0 mA'
-            module['+5V'] = '0 mA'
+            module['+12V'] = '0'
+            module['-12V'] = '0'
+            module['+5V'] = '0'
         
         modules.append([module['manufacturer'], module['name'],
             module['description'], module['width'], module['depth'],
